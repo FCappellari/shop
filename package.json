@@ -15,7 +15,6 @@
     "nodemon": "^1.18.3"
   },
   "dependencies": {
-    "body-parser": "^1.18.3",
     "connect-mongodb-session": "^3.1.1",
     "dotenv": "^10.0.0",
     "ejs": "^2.6.1",
