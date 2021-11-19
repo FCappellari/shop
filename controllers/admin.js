@@ -4,16 +4,12 @@ exports.getAddProduct = (req, res, next) => {
   res.render('admin/edit-product', {
     pageTitle: 'Add Product',
     path: '/admin/add-product',
-    editing: false,
-    isAuthenticated: req.session.user
+    editing: false
   });
 };
 
 exports.postAddProduct = (req, res, next) => {
-  const title = req.body.title;
-  const price = req.body.price;
-  const description = req.body.description;
-  const imageUrl = req.body.imageUrl;
+  const { title, price, description, imageUrl } = req.body;
 
   const product = new Product({
     title: title,
@@ -49,19 +45,14 @@ exports.getEditProduct = (req, res, next) => {
         pageTitle: 'Edit Product',
         path: '/admin/edit-product',
         editing: editMode,
-        product: product,
-        isAuthenticated: req.session.user
+        product: product
       });
     })
     .catch(err => console.log(err));
 };
 
 exports.postEditProduct = (req, res, next) => {
-  const prodId = req.body.productId;
-  const updatedTitle = req.body.title;
-  const updatedPrice = req.body.price;
-  const updatedImageUrl = req.body.imageUrl;
-  const updatedDesc = req.body.description;
+  const { prodId, updatedTitle, updatedPrice, updatedImageUrl, updatedDesc } = req.body;
 
   Product
     .findById(prodId)
@@ -89,8 +80,7 @@ exports.getProducts = (req, res, next) => {
       res.render('admin/products', {
         prods: products,
         pageTitle: 'Admin Products',
-        path: '/admin/products',
-        isAuthenticated: req.session.user
+        path: '/admin/products'
       });
     })
     .catch(err => console.log(err));
