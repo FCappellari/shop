@@ -18,13 +18,15 @@ router.post('/login',
     [
         check('email')
             .isEmail()
-            .withMessage('Invalid email or password.'),
+            .withMessage('Invalid email or password.')
+            .normalizeEmail(),
         body(
             'password',
             'Invalid email or password.'
         )
             .isLength({ min: 5 })
-            .isAlphanumeric(),
+            .isAlphanumeric()
+            .trim(),
     ],
     authController.postLogin
 );
@@ -45,13 +47,15 @@ router.post('/signup',
                             return Promise.reject('E-mail already used, please pick a different one.');
                         }
                     })
-            }),
+            })
+            .normalizeEmail(),
         body(
             'password',
             'Please enter a password with only numbers and text and at least 5 characters.'
         )
             .isLength({ min: 5 })
-            .isAlphanumeric(),
+            .isAlphanumeric()
+            .trim(),
         body('confirmPassword')
             .custom((value, { req }) => {
                 if (value !== req.body.password) {

@@ -1,15 +1,38 @@
+const { validationResult } = require('express-validator');
+
 const Product = require('../models/product');
 
 exports.getAddProduct = (req, res, next) => {
   res.render('admin/edit-product', {
     pageTitle: 'Add Product',
     path: '/admin/add-product',
-    editing: false
+    editing: false,
+    hasError: false,
+    errorMessage: null,
+    validationErrors: []
   });
 };
 
 exports.postAddProduct = (req, res, next) => {
   const { title, price, description, imageUrl } = req.body;
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(422).render('admin/edit-product', {
+      pageTitle: 'Add Product',
+      path: '/admin/edit-product',
+      editing: false,
+      hasError: true,
+      product: {
+        title: title,
+        price: price,
+        description: description,
+        imageUrl: imageUrl
+      },
+      errorMessage: errors.array()[0].msg,
+      validationErrors: errors.array()
+    });    
+  }
 
   const product = new Product({
     title: title,
@@ -45,7 +68,10 @@ exports.getEditProduct = (req, res, next) => {
         pageTitle: 'Edit Product',
         path: '/admin/edit-product',
         editing: editMode,
-        product: product
+        hasError: false,
+        product: product,
+        errorMessage: null,
+        validationErrors: []
       });
     })
     .catch(err => console.log(err));
@@ -53,6 +79,26 @@ exports.getEditProduct = (req, res, next) => {
 
 exports.postEditProduct = (req, res, next) => {
   const { prodId, updatedTitle, updatedPrice, updatedImageUrl, updatedDesc } = req.body;
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(422).render('admin/edit-product', {
+      pageTitle: 'Edit Product',
+      path: '/admin/edit-product',
+      editing: true,
+      hasError: true,
+      product: {
+        title: updatedTitle,
+        price: updatedPrice,
+        description: updatedDesc,
+        imageUrl: updatedImageUrl,
+        _id: prodId
+      },
+      errorMessage: errors.array()[0].msg,
+      validationErrors: errors.array()
+    });    
+  }
 
   Product
     .findById(prodId)
